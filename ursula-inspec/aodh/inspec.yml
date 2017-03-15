@@ -1,0 +1,7 @@
+name: inspec-aodh
+title: InSpec Profile for Aodh
+maintainer: Blue Box
+copyright: Blue Box
+license: Apache 2.0
+summary: An InSpec Compliance Profile for Aodh
+version: 0.1.0
