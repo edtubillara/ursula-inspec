@@ -62,15 +62,17 @@ end
 control 'MYSQL005' do
   impact 1.0
   title 'Strict permissions for my.cnf to prevent unauthorized users from accessing them.'
-  desc 'strict permissions(644) and ownership (root user and group) for my.cnf to prevent unauthorized users from accessing them.'
+  desc 'strict permissions(644) and ownership (root user and group) for /etc/my.cnf to prevent unauthorized users from accessing them.'
   tag 'production','development'
   tag 'mysql'
   tag remediation: 'ursula <env> site.yml --tags=mysql'
-  describe file("/etc/my.cnf") do
-    its('mode') { should cmp '0644' }
-    its('group') { should eq 'root' }
-    its('owner') { should eq 'root'}
-  end
+    if File.file?('/etc/my.cnf')
+      describe file("/etc/my.cnf") do
+        its('mode') { should cmp '0644' }
+        its('group') { should eq 'root' }
+        its('owner') { should eq 'root'}
+      end
+    end
 end
 
 control 'MYSQL006' do
