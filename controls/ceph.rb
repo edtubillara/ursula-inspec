@@ -25,26 +25,30 @@ control 'CEPH002' do
   describe file("/etc/ceph/rbdmap") do
     its('owner') { should eq 'root' }
     its('group') { should eq 'root' }
-    its('mode') { should cmp '0755' }
+    its('mode') { should cmp '0644' }
   end
 end
 
 control 'CEPH003' do
   impact 1.0
-  title 'Strict permissions for /etc/ceph/rbdmap to prevent unauthorized users'
-  desc 'Strict permissions(644) and ownership (root user and group) for /etc/ceph/rbdmap to prevent unauthorized users'
+  title 'Strict permissions for ceph log files'
+  desc 'Strict permissions and  ownership for ceph log files'
   tag 'production','development'
   tag 'ceph'
   tag remediation: 'ursula <env> site.yml --tags=ceph'
   files = Dir['/var/log/ceph/*.log']
   files.each do |file|
+    file_mode = '0644'
+    if "#{file}".match(/^\/var\/log\/ceph\/ceph-utils.log.*$/)
+      file_mode = '0600'
+    end
     if File.exist?("#{file}")
       describe file("#{file}") do
          # ceph.log is owned by ceph on cpm nodes
          # but it owned by root on osd nodes
         its('owner') { should match '^root$|^ceph$' }
         its('group') { should eq 'ceph' }
-        its('mode') { should cmp '0644' }
+        its('mode') { should cmp file_mode }
       end
     end
   end
