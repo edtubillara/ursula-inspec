@@ -64,8 +64,8 @@ control 'RABBITMQ005' do
     if File.file?("/var/log/rabbitmq/#{file}")
       describe file("/var/log/rabbitmq/#{file}") do
         its('mode') { should cmp '0644' }
-        its('owner') { should eq 'rabbitmq' }
-        its('group') { should eq 'rabbitmq' }
+        its('owner') { should match '^root$|^rabbitmq$' }
+        its('group') { should match '^root$|^rabbitmq$' }
       end
     end
   end
