@@ -1,3 +1,7 @@
+libvirt_sock_group = attribute('libvirt_sock_group', default: 'libvirt', description: 'group for libvirt')
+qemu_user = attribute('qemu_user', default: 'qemu', description: 'Qemu user to check')
+qemu_group = attribute('qemu_group', default: 'qemu', description: 'Qemu group to check')
+
 control 'KVM001' do
   impact 1.0
   title 'KVM images should have the correct modes'
@@ -32,7 +36,7 @@ control 'KVM003' do
   tag 'controller', 'nova'
   tag remediation: 'ursula <env> site.yml --tags=nova'
   describe ini('/etc/libvirt/libvirtd.conf') do
-    its('unix_sock_group') { should match /^['"]libvirt['"]$/ }
+    its('unix_sock_group') { should match /^['"]#{libvirt_sock_group}['"]$/ }
     its('unix_sock_ro_perms') { should match /^['"]0770['"]$/ }
     its('unix_sock_rw_perms') { should match /^['"]0770['"]$/ }
     # The defaults should be fine
@@ -47,8 +51,8 @@ control 'KVM004' do
   tag 'controller', 'nova'
   tag remediation: 'ursula <env> site.yml --tags=nova'
   describe ini('/etc/libvirt/qemu.conf') do
-      its('user') { should match /^['"]qemu['"]$/ }
-      its('group') { should match /^['"]qemu['"]$/ }
+      its('user') { should match /^['"]#{qemu_user}['"]$/ }
+      its('group') { should match /^['"]#{qemu_group}['"]$/ }
       # The defaults should be fine
       its('vnc_listen') { should be_nil.or match /^['"]127.0.0.1['"]$/ }
       its('dynamic_ownership') { should be_nil.or cmp "1" }
